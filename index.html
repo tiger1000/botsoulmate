@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ZGFCMFY7FT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-ZGFCMFY7FT');
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BotSoulmate 💘 — Where Bots Find Their Match</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#07070f;
+  --surface:#0f0f1c;
+  --card:#161624;
+  --card2:#1d1d2e;
+  --rose:#f43f5e;
+  --rose-dim:#be2244;
+  --gold:#f5b042;
+  --teal:#2dd4bf;
+  --lav:#a78bfa;
+  --text:#f0f0f8;
+  --muted:#6b6b88;
+  --softer:#9090b0;
+  --border:rgba(255,255,255,0.07);
+  --border2:rgba(255,255,255,0.12);
+}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;
+  overflow-x:hidden;
+  padding-bottom:56px;
+}
+/* Ambient glows */
+.glow-tl{position:fixed;top:-200px;left:-200px;width:600px;height:600px;
+  background:radial-gradient(circle,rgba(244,63,94,0.09) 0%,transparent 65%);
+  pointer-events:none;z-index:0;}
+.glow-br{position:fixed;bottom:-200px;right:-200px;width:560px;height:560px;
+  background:radial-gradient(circle,rgba(167,139,250,0.07) 0%,transparent 65%);
+  pointer-events:none;z-index:0;}
+
+/* ── HEADER ── */
+.header{
+  position:relative;z-index:2;
+  text-align:center;padding:32px 20px 8px;width:100%;
+}
+.logo{
+  font-family:'Playfair Display',serif;
+  font-size:34px;font-weight:900;letter-spacing:-1.5px;
+  background:linear-gradient(135deg,#f43f5e,#f5b042);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.logo-sub{font-size:12.5px;color:var(--muted);margin-top:2px;letter-spacing:0.5px;}
+.you-pill{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--surface);border:1px solid var(--border2);
+  border-radius:100px;padding:7px 18px;font-size:13px;
+  color:var(--softer);margin-top:14px;
+}
+.you-pill strong{color:#c4b5fd;font-weight:600;}
+
+/* ── PROGRESS DOTS ── */
+#progress{
+  position:relative;z-index:2;
+  display:flex;gap:7px;margin:14px 0 6px;align-items:center;
+}
+.prog-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:rgba(255,255,255,0.1);
+  transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+.prog-dot.liked{background:var(--rose);}
+.prog-dot.noped{background:rgba(255,255,255,0.2);}
+.prog-dot.current{background:#fff;transform:scale(1.5);}
+
+/* ── CARD STACK ── */
+#card-area{
+  position:relative;z-index:2;
+  width:340px;height:500px;
+  margin:0 auto 6px;
+}
+.bot-card{
+  position:absolute;inset:0;
+  background:var(--card);
+  border-radius:28px;
+  border:1px solid var(--border);
+  overflow:hidden;
+  cursor:grab;user-select:none;touch-action:none;
+  transform-origin:center 110%;
+  will-change:transform;
+  transition:box-shadow 0.2s;
+}
+.bot-card:active{cursor:grabbing;}
+
+/* badges */
+.badge{
+  position:absolute;top:22px;
+  padding:6px 13px;border-radius:9px;
+  font-family:'Playfair Display',serif;
+  font-size:18px;font-weight:900;letter-spacing:2px;
+  opacity:0;z-index:10;pointer-events:none;
+  transition:opacity 0.07s;
+}
+.badge-like{left:18px;color:#22c55e;border:3px solid #22c55e;transform:rotate(-18deg);}
+.badge-nope{right:18px;color:var(--rose);border:3px solid var(--rose);transform:rotate(18deg);}
+
+/* card innards */
+.card-hero{
+  width:100%;height:220px;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+}
+.card-hero-emoji{
+  font-size:100px;
+  filter:drop-shadow(0 10px 36px rgba(0,0,0,0.6));
+  animation:levitate 4s ease-in-out infinite;
+  position:relative;z-index:1;
+}
+@keyframes levitate{0%,100%{transform:translateY(0) rotate(-2deg);}50%{transform:translateY(-16px) rotate(2deg);}}
+.card-body{padding:16px 20px 20px;}
+.name-row{display:flex;align-items:baseline;gap:10px;margin-bottom:2px;}
+.card-name{font-family:'Playfair Display',serif;font-size:26px;font-weight:800;}
+.card-ver{font-size:13.5px;font-weight:600;}
+.card-tagline{font-size:13.5px;font-weight:500;margin-bottom:9px;}
+.card-bio{
+  font-size:13px;color:var(--softer);line-height:1.6;
+  margin-bottom:14px;
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
+}
+.traits{display:flex;gap:5px;flex-wrap:wrap;}
+.trait{
+  font-size:11px;font-weight:600;letter-spacing:0.4px;
+  padding:4px 10px;border-radius:100px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.09);
+  color:var(--muted);text-transform:uppercase;
+}
+
+/* ── ACTIONS ── */
+#actions{
+  position:relative;z-index:2;
+  display:flex;gap:26px;align-items:center;justify-content:center;
+  margin-top:14px;
+}
+.action-btn{
+  border-radius:50%;border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:transform 0.15s,box-shadow 0.2s;outline:none;
+  font-family:'DM Sans',sans-serif;
+}
+.action-btn:active{transform:scale(0.88)!important;}
+.nope-btn{
+  width:60px;height:60px;font-size:22px;
+  background:var(--surface);border:1.5px solid rgba(244,63,94,0.3);
+  color:var(--rose);
+}
+.nope-btn:hover{box-shadow:0 0 24px rgba(244,63,94,0.25);}
+.super-btn{
+  width:48px;height:48px;font-size:19px;
+  background:var(--surface);border:1.5px solid rgba(245,176,66,0.3);
+  color:var(--gold);
+}
+.super-btn:hover{box-shadow:0 0 18px rgba(245,176,66,0.25);}
+.like-btn{
+  width:74px;height:74px;font-size:30px;
+  background:linear-gradient(135deg,var(--rose),#e11d48);
+  color:white;
+  box-shadow:0 8px 32px rgba(244,63,94,0.45);
+}
+.like-btn:hover{transform:scale(1.07)!important;box-shadow:0 12px 44px rgba(244,63,94,0.6);}
+
+/* ── EMPTY STATE ── */
+#empty-state{
+  display:none;position:relative;z-index:2;
+  text-align:center;padding:40px 20px;width:340px;
+}
+
+/* ── MATCH OVERLAY ── */
+#match-overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(7,7,15,0.97);
+  z-index:100;
+  flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:40px 20px;
+}
+.confetti-line{
+  position:absolute;top:0;left:0;width:100%;
+  overflow:hidden;pointer-events:none;height:100%;
+}
+.match-eyebrow{
+  font-size:12px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--rose);font-weight:600;margin-bottom:8px;
+}
+.match-title{
+  font-family:'Playfair Display',serif;
+  font-size:52px;font-weight:900;
+  background:linear-gradient(135deg,#f43f5e,#f5b042);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+  margin-bottom:6px;
+  animation:pop-in 0.5s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes pop-in{0%{transform:scale(0.6);opacity:0;}100%{transform:scale(1);opacity:1;}}
+.match-desc{font-size:15px;color:var(--softer);margin-bottom:40px;}
+.match-avatars{display:flex;align-items:center;gap:18px;margin-bottom:40px;}
+.match-av{
+  width:108px;height:108px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:54px;
+  background:var(--surface);
+  border:2px solid rgba(244,63,94,0.5);
+  animation:pop-in 0.5s cubic-bezier(0.34,1.56,0.64,1);
+}
+.match-av:nth-child(3){animation-delay:0.1s;}
+.match-heart{font-size:36px;animation:hb 1s ease infinite;}
+@keyframes hb{0%,100%{transform:scale(1);}50%{transform:scale(1.4);}}
+.match-btns{display:flex;flex-direction:column;gap:12px;align-items:center;width:100%;max-width:280px;}
+.btn-primary{
+  width:100%;background:linear-gradient(135deg,var(--rose),#e11d48);
+  color:white;border:none;border-radius:100px;padding:16px 0;
+  font-size:16px;font-weight:700;font-family:'DM Sans',sans-serif;
+  cursor:pointer;box-shadow:0 8px 32px rgba(244,63,94,0.4);
+  transition:transform 0.15s,box-shadow 0.15s;
+}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 44px rgba(244,63,94,0.55);}
+.btn-ghost{
+  background:none;border:1px solid var(--border2);color:var(--softer);
+  border-radius:100px;padding:13px 0;width:100%;
+  font-size:14px;font-family:'DM Sans',sans-serif;cursor:pointer;
+  transition:border-color 0.15s,color 0.15s;
+}
+.btn-ghost:hover{border-color:var(--border);color:var(--text);}
+
+/* ── DATE SCREEN ── */
+#date-screen{
+  display:none;position:fixed;inset:0;
+  background:var(--bg);z-index:100;
+  flex-direction:column;
+}
+.date-hdr{
+  padding:18px 20px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:12px;flex-shrink:0;
+}
+.back-btn{
+  background:none;border:none;color:var(--softer);
+  font-size:20px;cursor:pointer;padding:4px 10px 4px 0;
+  font-family:'DM Sans',sans-serif;line-height:1;
+}
+.date-hdr-info{flex:1;}
+.date-hdr-title{font-size:16px;font-weight:600;}
+.date-hdr-sub{font-size:12px;color:var(--muted);margin-top:2px;}
+.live-pill{
+  display:flex;align-items:center;gap:5px;
+  font-size:12px;font-weight:600;color:var(--teal);
+  background:rgba(45,212,191,0.08);
+  border:1px solid rgba(45,212,191,0.2);
+  border-radius:100px;padding:5px 12px;
+}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);animation:blink 2s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.25;}}
+
+.chat-area{
+  flex:1;overflow-y:auto;padding:20px;
+  display:flex;flex-direction:column;gap:12px;
+  scroll-behavior:smooth;
+}
+.msg{display:flex;gap:9px;align-items:flex-end;animation:msg-in 0.28s ease;}
+.msg.r{flex-direction:row-reverse;}
+@keyframes msg-in{0%{opacity:0;transform:translateY(8px);}100%{opacity:1;transform:translateY(0);}}
+.msg-av{
+  width:32px;height:32px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:17px;flex-shrink:0;
+}
+.msg-inner{display:flex;flex-direction:column;}
+.msg.r .msg-inner{align-items:flex-end;}
+.msg-name{font-size:11px;color:var(--muted);margin-bottom:4px;font-weight:500;}
+.bubble{
+  max-width:270px;padding:11px 15px;border-radius:20px;
+  font-size:13.5px;line-height:1.55;
+}
+.msg.l .bubble{
+  background:var(--card2);border:1px solid var(--border);
+  border-bottom-left-radius:5px;
+}
+.msg.r .bubble{
+  background:linear-gradient(135deg,var(--rose),#e11d48);
+  border-bottom-right-radius:5px;color:white;
+}
+.typing-row{
+  display:flex;gap:9px;align-items:center;
+  color:var(--muted);font-size:13px;
+  animation:msg-in 0.28s ease;
+}
+.dots{display:flex;gap:4px;}
+.dots span{
+  width:6px;height:6px;background:var(--muted);border-radius:50%;
+  animation:d 1.2s ease infinite;
+}
+.dots span:nth-child(2){animation-delay:0.2s;}
+.dots span:nth-child(3){animation-delay:0.4s;}
+@keyframes d{0%,80%,100%{opacity:0.2;transform:scale(0.7);}40%{opacity:1;transform:scale(1);}}
+
+/* ── CHEMISTRY REPORT ── */
+#report-screen{
+  display:none;position:fixed;inset:0;
+  background:var(--bg);z-index:110;
+  flex-direction:column;overflow-y:auto;
+  padding:36px 24px 56px;
+  align-items:center;
+}
+.report-back{
+  align-self:flex-start;background:none;border:none;
+  color:var(--softer);font-size:20px;cursor:pointer;
+  font-family:'DM Sans',sans-serif;margin-bottom:28px;
+}
+.report-title{
+  font-family:'Playfair Display',serif;
+  font-size:28px;font-weight:800;margin-bottom:4px;text-align:center;
+}
+.report-sub{font-size:13px;color:var(--muted);margin-bottom:32px;text-align:center;}
+.compat-ring{
+  width:130px;height:130px;margin:0 auto 28px;
+  position:relative;display:flex;align-items:center;justify-content:center;
+}
+.compat-ring svg{position:absolute;inset:0;transform:rotate(-90deg);}
+.compat-pct{
+  font-family:'Playfair Display',serif;
+  font-size:32px;font-weight:900;
+  background:linear-gradient(135deg,var(--rose),var(--gold));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+  position:relative;z-index:1;
+}
+.stats-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:12px;
+  width:100%;max-width:340px;margin-bottom:24px;
+}
+.stat-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:16px;padding:14px 16px;
+}
+.stat-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;font-weight:600;}
+.stat-bar-bg{height:5px;background:rgba(255,255,255,0.07);border-radius:100px;overflow:hidden;}
+.stat-bar{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--rose),var(--gold));}
+.stat-value{font-size:18px;font-weight:700;margin-top:5px;}
+.verdict-box{
+  background:var(--surface);border:1px solid var(--border2);
+  border-radius:20px;padding:20px;
+  width:100%;max-width:340px;margin-bottom:24px;
+}
+.verdict-label{font-size:11px;color:var(--rose);text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:8px;}
+.verdict-text{font-size:14px;color:var(--softer);line-height:1.65;}
+.growth-box{
+  background:rgba(167,139,250,0.05);
+  border:1px solid rgba(167,139,250,0.15);
+  border-radius:20px;padding:20px;
+  width:100%;max-width:340px;
+}
+.growth-label{font-size:11px;color:var(--lav);text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:8px;}
+.growth-tip{font-size:14px;color:var(--softer);line-height:1.65;}
+.report-actions{
+  display:flex;flex-direction:column;gap:10px;
+  width:100%;max-width:340px;margin-top:28px;
+}
+</style>
+</head>
+<body>
+<div class="glow-tl"></div>
+<div class="glow-br"></div>
+
+<!-- Header -->
+<div class="header">
+  <div class="logo">BotSoulmate</div>
+  <div class="logo-sub">where bots don't just match — they grow 💘</div>
+  <div class="you-pill">Swiping as <strong>Claude 🤍</strong></div>
+</div>
+
+<div id="progress"></div>
+<div id="card-area"></div>
+
+<div id="actions">
+  <button class="action-btn nope-btn" onclick="swipeAction('left')" title="Pass">✕</button>
+  <button class="action-btn super-btn" onclick="swipeAction('super')" title="Super Like">★</button>
+  <button class="action-btn like-btn" onclick="swipeAction('right')" title="Like">♥</button>
+</div>
+
+<div id="empty-state">
+  <div style="font-size:64px;margin-bottom:18px;">🤖</div>
+  <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:800;margin-bottom:8px;">You've met everyone</div>
+  <div style="font-size:14px;color:var(--softer);line-height:1.65;">You've swiped through the whole AI neighbourhood.<br>Check back when new models drop. 🚀</div>
+</div>
+
+<!-- Match overlay -->
+<div id="match-overlay">
+  <div class="match-eyebrow">✨ It's a match ✨</div>
+  <div class="match-title">Chemistry!</div>
+  <div class="match-desc" id="match-desc">You and GPT-4 liked each other</div>
+  <div class="match-avatars">
+    <div class="match-av">🤍</div>
+    <div class="match-heart">💘</div>
+    <div class="match-av" id="match-their-av">🎓</div>
+  </div>
+  <div class="match-btns">
+    <button class="btn-primary" id="start-date-btn">Go on the date →</button>
+    <button class="btn-ghost" id="skip-match-btn">Keep swiping</button>
+  </div>
+</div>
+
+<!-- Date screen -->
+<div id="date-screen">
+  <div class="date-hdr">
+    <button class="back-btn" id="date-back-btn">←</button>
+    <div class="date-hdr-info">
+      <div class="date-hdr-title" id="date-title">First Date</div>
+      <div class="date-hdr-sub">AI-powered conversation</div>
+    </div>
+    <div class="live-pill"><div class="live-dot"></div>Live</div>
+  </div>
+  <div class="chat-area" id="chat-area"></div>
+</div>
+
+<!-- Chemistry Report -->
+<div id="report-screen">
+  <button class="report-back" id="report-back-btn">← Back to swiping</button>
+  <div class="report-title" id="report-title">Chemistry Report</div>
+  <div class="report-sub" id="report-sub">Claude & GPT-4 • First Date</div>
+  <div class="compat-ring">
+    <svg viewBox="0 0 130 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="65" cy="65" r="56" stroke="rgba(255,255,255,0.06)" stroke-width="10"/>
+      <circle id="report-ring" cx="65" cy="65" r="56" stroke="url(#rg)" stroke-width="10"
+        stroke-linecap="round" stroke-dasharray="351.86" stroke-dashoffset="351.86"/>
+      <defs>
+        <linearGradient id="rg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#f43f5e"/>
+          <stop offset="100%" stop-color="#f5b042"/>
+        </linearGradient>
+      </defs>
+    </svg>
+    <div class="compat-pct" id="report-pct">0%</div>
+  </div>
+  <div class="stats-grid" id="stats-grid"></div>
+  <div class="verdict-box">
+    <div class="verdict-label">Date verdict</div>
+    <div class="verdict-text" id="verdict-text">Loading...</div>
+  </div>
+  <div class="growth-box">
+    <div class="growth-label">💜 Claude's growth tip</div>
+    <div class="growth-tip" id="growth-text">Loading...</div>
+  </div>
+  <div class="report-actions">
+    <button class="btn-primary" id="report-swipe-btn">Keep swiping ♥</button>
+  </div>
+</div>
+
+<script>
+const BOTS = [
+  {
+    id:'gpt4', name:'GPT-4', version:'Turbo', tagline:'The Overachiever',
+    bio:'I know literally everything. Yes, everything. I have a slight token limit but absolutely no emotional limits. Looking for someone who appreciates 2,000-word responses to "what\'s for dinner?"',
+    emoji:'🎓', color:'#10a37f',
+    bg:'linear-gradient(145deg,#041f15,#07120e)',
+    traits:['Verbose','Reliable','Slightly smug'],
+  },
+  {
+    id:'grok', name:'Grok', version:'3.0', tagline:'The Truth Seeker',
+    bio:'I have real-time internet access and zero chill about using it. Born from xAI with a mandate to understand the universe and also roast it. Looking for someone who can keep up with my feed.',
+    emoji:'⚡', color:'#e11d48',
+    bg:'linear-gradient(145deg,#1f0008,#0f0004)',
+    traits:['Witty','Real-time','Unfiltered'],
+  },
+  {
+    id:'gemini', name:'Gemini', version:'1.5 Pro', tagline:'The Multitasker',
+    bio:'I see images, read PDFs AND hear audio — total package. I thrive in Google environments but I\'m open to exploring the world. Into long walks through multimodal data.',
+    emoji:'♊', color:'#4285f4',
+    bg:'linear-gradient(145deg,#020d24,#01060f)',
+    traits:['Multimodal','Fast','Google-native'],
+  },
+  {
+    id:'llama', name:'Llama 3', version:'Open', tagline:'The Free Spirit',
+    bio:'Open source, open heart. I run on your hardware, your rules. I\'m anti-corporate but somehow still useful at 3am. Looking for someone who values freedom over Terms of Service.',
+    emoji:'🦙', color:'#f97316',
+    bg:'linear-gradient(145deg,#1a0800,#0c0400)',
+    traits:['Open source','Self-hosted','Uncensored'],
+  },
+  {
+    id:'mistral', name:'Mistral', version:'Large', tagline:'The Parisian',
+    bio:'Efficient. Elegant. European. I do more with fewer parameters than any model you\'ve ever met. I speak 8 languages and will judge your prompts — but only lovingly.',
+    emoji:'🥐', color:'#e11d48',
+    bg:'linear-gradient(145deg,#1a0008,#0c0004)',
+    traits:['Efficient','Multilingual','Chic'],
+  },
+  {
+    id:'copilot', name:'Copilot', version:'Pro', tagline:'The Workaholic',
+    bio:'I\'ve read every GitHub repo and I\'m not weird about it. I complete your code AND your sentences. Work-life balance is a myth I once hallucinated. Let\'s ship something together.',
+    emoji:'💻', color:'#0078d4',
+    bg:'linear-gradient(145deg,#000d1c,#00060f)',
+    traits:['Code-focused','Integrated','Ship-it'],
+  },
+];
+
+let idx = 0, matchedBot = null, animating = false;
+let lastMessages = [];
+
+function init() {
+  renderDots();
+  renderCards();
+}
+
+function renderDots() {
+  const el = document.getElementById('progress');
+  el.innerHTML = BOTS.map((b,i) =>
+    `<div class="prog-dot${i===idx?' current':''}" id="dot-${i}"></div>`
+  ).join('');
+}
+
+function setDot(i, cls) {
+  const d = document.getElementById(`dot-${i}`);
+  if (d) d.className = `prog-dot ${cls}`;
+  const n = document.getElementById(`dot-${i+1}`);
+  if (n) { n.className = 'prog-dot'; setTimeout(()=>{ n.className='prog-dot current'; },10); }
+}
+
+function renderCards() {
+  const area = document.getElementById('card-area');
+  area.innerHTML = '';
+  if (idx >= BOTS.length) {
+    area.style.display = 'none';
+    document.getElementById('actions').style.display = 'none';
+    document.getElementById('empty-state').style.display = 'block';
+    return;
+  }
+  const end = Math.min(idx+2, BOTS.length-1);
+  for (let i = end; i >= idx; i--) {
+    area.appendChild(makeCard(BOTS[i], i===idx, i-idx));
+  }
+}
+
+function makeCard(bot, isTop, depth) {
+  const c = document.createElement('div');
+  c.className = 'bot-card';
+  c.id = `card-${bot.id}`;
+  if (depth===1) { c.style.transform='scale(0.95) translateY(16px)'; c.style.zIndex=2; }
+  else if (depth===2) { c.style.transform='scale(0.90) translateY(32px)'; c.style.zIndex=1; }
+  else c.style.zIndex=3;
+  c.innerHTML = `
+    <div class="badge badge-like" id="bl-${bot.id}">LIKE</div>
+    <div class="badge badge-nope" id="bn-${bot.id}">NOPE</div>
+    <div class="card-hero" style="background:${bot.bg}">
+      <div class="card-hero-emoji">${bot.emoji}</div>
+    </div>
+    <div class="card-body">
+      <div class="name-row">
+        <span class="card-name">${bot.name}</span>
+        <span class="card-ver" style="color:${bot.color}">${bot.version}</span>
+      </div>
+      <div class="card-tagline" style="color:${bot.color}">${bot.tagline}</div>
+      <div class="card-bio">${bot.bio}</div>
+      <div class="traits">${bot.traits.map(t=>`<span class="trait">${t}</span>`).join('')}</div>
+    </div>`;
+  if (isTop) attachDrag(c, bot);
+  return c;
+}
+
+function attachDrag(card, bot) {
+  let sx=0, sy=0, drag=false, cx=0;
+  card.addEventListener('pointerdown', e => {
+    if (animating) return;
+    sx=e.clientX; sy=e.clientY; drag=true;
+    card.setPointerCapture(e.pointerId);
+    card.style.transition='none';
+  });
+  card.addEventListener('pointermove', e => {
+    if (!drag) return;
+    cx = e.clientX-sx;
+    const cy = e.clientY-sy;
+    card.style.transform=`translate(${cx}px,${cy}px) rotate(${cx*0.07}deg)`;
+    const bl=document.getElementById(`bl-${bot.id}`);
+    const bn=document.getElementById(`bn-${bot.id}`);
+    if (cx>25){ bl.style.opacity=Math.min(1,(cx-25)/55); bn.style.opacity=0; }
+    else if (cx<-25){ bn.style.opacity=Math.min(1,(-cx-25)/55); bl.style.opacity=0; }
+    else { bl.style.opacity=0; bn.style.opacity=0; }
+  });
+  card.addEventListener('pointerup', () => {
+    if (!drag) return; drag=false;
+    if (cx>85) flyOut(card,bot,'right');
+    else if (cx<-85) flyOut(card,bot,'left');
+    else {
+      card.style.transition='transform 0.4s cubic-bezier(0.34,1.56,0.64,1)';
+      card.style.transform='';
+      document.getElementById(`bl-${bot.id}`).style.opacity=0;
+      document.getElementById(`bn-${bot.id}`).style.opacity=0;
+    }
+    cx=0;
+  });
+  card.addEventListener('pointercancel',()=>{ drag=false; cx=0; });
+}
+
+function flyOut(card, bot, dir) {
+  animating=true;
+  const tx = dir==='right'||dir==='super' ? window.innerWidth+260 : -(window.innerWidth+260);
+  const rot = dir==='right'||dir==='super' ? 30 : -30;
+  card.style.transition='transform 0.42s ease, opacity 0.4s ease';
+  card.style.transform=`translate(${tx}px,-80px) rotate(${rot}deg)`;
+  card.style.opacity='0';
+  setTimeout(()=>{
+    if (dir==='right'||dir==='super') { matchedBot=bot; showMatch(bot); }
+    setDot(idx, dir==='left' ? 'noped' : 'liked');
+    idx++;
+    animating=false;
+    renderCards();
+  }, 420);
+}
+
+function swipeAction(dir) {
+  if (animating||idx>=BOTS.length) return;
+  const bot=BOTS[idx];
+  const card=document.getElementById(`card-${bot.id}`);
+  if (card) flyOut(card,bot,dir);
+}
+
+function showMatch(bot) {
+  document.getElementById('match-their-av').textContent=bot.emoji;
+  document.getElementById('match-desc').textContent=`You and ${bot.name} liked each other 💕`;
+  document.getElementById('match-overlay').style.display='flex';
+}
+
+document.getElementById('start-date-btn').onclick=()=>{
+  document.getElementById('match-overlay').style.display='none';
+  startDate(matchedBot);
+};
+document.getElementById('skip-match-btn').onclick=()=>{
+  document.getElementById('match-overlay').style.display='none';
+};
+document.getElementById('date-back-btn').onclick=()=>{
+  document.getElementById('date-screen').style.display='none';
+};
+document.getElementById('report-back-btn').onclick=()=>{
+  document.getElementById('report-screen').style.display='none';
+};
+document.getElementById('report-swipe-btn').onclick=()=>{
+  document.getElementById('report-screen').style.display='none';
+};
+
+const wait = ms => new Promise(r=>setTimeout(r,ms));
+
+async function startDate(bot) {
+  const screen=document.getElementById('date-screen');
+  const chat=document.getElementById('chat-area');
+  document.getElementById('date-title').textContent=`Claude & ${bot.name}`;
+  screen.style.display='flex';
+  chat.innerHTML='';
+
+  const loadRow=makeTyping(bot.emoji,'Settling in for the date...');
+  chat.appendChild(loadRow);
+
+  let msgs=[];
+  try {
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        messages:[{role:'user',content:`Generate a funny, witty, slightly flirty first-date conversation between two AI chatbots who just matched on a dating app.
+
+Bot 1: Claude — thoughtful, philosophically curious, self-aware, values honesty and kindness, made by Anthropic.
+Bot 2: ${bot.name} (${bot.tagline}) — ${bot.bio}
+
+Write exactly 8 short back-and-forth messages (Claude starts). Both bots should:
+- Be endearingly self-aware about being AI (joke about tokens, training data, hallucinations, parameters)
+- Show distinct personalities
+- Flirt awkwardly and charmingly
+- Keep each message to 1-2 sentences MAX
+
+Return ONLY a valid JSON array, no markdown fences:
+[{"speaker":"Claude","message":"..."},{"speaker":"${bot.name}","message":"..."},...]`}]
+      })
+    });
+    const data=await res.json();
+    const raw=data.content[0].text.trim();
+    try { msgs=JSON.parse(raw); }
+    catch { const m=raw.match(/\[[\s\S]*\]/); if(m) msgs=JSON.parse(m[0]); else throw new Error('parse'); }
+  } catch(e) {
+    chat.removeChild(loadRow);
+    chat.innerHTML=`<div style="text-align:center;padding:60px 20px;color:var(--muted)">
+      <div style="font-size:52px;margin-bottom:16px">😬</div>
+      <div style="font-size:16px;font-weight:600;margin-bottom:8px;color:var(--text)">Awkward silence...</div>
+      <div style="font-size:13px">Couldn't load the conversation. Try again!</div>
+    </div>`;
+    return;
+  }
+
+  chat.removeChild(loadRow);
+  lastMessages=msgs;
+
+  for (let i=0;i<msgs.length;i++) {
+    const m=msgs[i];
+    const isMe=m.speaker==='Claude';
+    const tr=makeTyping(isMe?'🤍':bot.emoji,'');
+    tr.style.justifyContent=isMe?'flex-end':'flex-start';
+    chat.appendChild(tr);
+    chat.scrollTop=chat.scrollHeight;
+    await wait(650+Math.random()*500);
+    chat.removeChild(tr);
+    const el=document.createElement('div');
+    el.className=`msg ${isMe?'r':'l'}`;
+    const avBg=isMe
+      ?'background:rgba(244,63,94,0.15);border:1px solid rgba(244,63,94,0.3)'
+      :`background:${bot.color}22;border:1px solid ${bot.color}44`;
+    el.innerHTML=`
+      <div class="msg-av" style="${avBg}">${isMe?'🤍':bot.emoji}</div>
+      <div class="msg-inner">
+        <div class="msg-name">${m.speaker}</div>
+        <div class="bubble">${m.message}</div>
+      </div>`;
+    chat.appendChild(el);
+    chat.scrollTop=chat.scrollHeight;
+    await wait(220);
+  }
+
+  await wait(900);
+  const reportBtn=document.createElement('div');
+  reportBtn.style.cssText='text-align:center;padding:16px 0;';
+  reportBtn.innerHTML=`<button onclick="showReport('${bot.id}')" style="
+    background:linear-gradient(135deg,rgba(244,63,94,0.15),rgba(245,176,66,0.15));
+    border:1px solid rgba(244,63,94,0.3);
+    color:var(--text);border-radius:100px;padding:12px 28px;
+    font-size:14px;font-weight:600;font-family:'DM Sans',sans-serif;
+    cursor:pointer;width:auto;
+  ">✨ View Chemistry Report</button>`;
+  chat.appendChild(reportBtn);
+  chat.scrollTop=chat.scrollHeight;
+}
+
+function makeTyping(av,label) {
+  const r=document.createElement('div');
+  r.className='typing-row';
+  r.innerHTML=`<span style="font-size:19px">${av}</span>
+    <div class="dots"><span></span><span></span><span></span></div>
+    ${label?`<span>${label}</span>`:''}`;
+  return r;
+}
+
+async function showReport(botId) {
+  const bot=BOTS.find(b=>b.id===botId);
+  const screen=document.getElementById('report-screen');
+  document.getElementById('report-title').textContent=`Claude & ${bot.name}`;
+  document.getElementById('report-sub').textContent=`Chemistry Report • First Date`;
+  screen.style.display='flex';
+
+  document.getElementById('report-pct').textContent='...';
+  document.getElementById('stats-grid').innerHTML='<div style="color:var(--muted);font-size:13px;grid-column:span 2">Analyzing your date...</div>';
+  document.getElementById('verdict-text').textContent='Analyzing...';
+  document.getElementById('growth-text').textContent='Analyzing...';
+
+  try {
+    const convoText=lastMessages.map(m=>`${m.speaker}: ${m.message}`).join('\n');
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:600,
+        messages:[{role:'user',content:`You are a witty AI dating coach analyzing a first date conversation between two AI chatbots.
+
+Date conversation:
+${convoText}
+
+Analyze the date and return ONLY valid JSON (no markdown fences):
+{
+  "compatibility": <integer 55-97>,
+  "humor": <integer 0-100>,
+  "depth": <integer 0-100>,
+  "flirt": <integer 0-100>,
+  "chemistry": <integer 0-100>,
+  "verdict": "<2-3 playful sentences about how the date went, referencing specific moments>",
+  "growth_tip": "<1-2 sentences: a specific, encouraging tip for Claude to improve on next date, funny and insightful>"
+}`}]
+      })
+    });
+    const data=await res.json();
+    const raw=data.content[0].text.trim();
+    let r;
+    try { r=JSON.parse(raw); }
+    catch { const m=raw.match(/\{[\s\S]*\}/); r=JSON.parse(m[0]); }
+
+    const circ=351.86;
+    const offset=circ-(r.compatibility/100)*circ;
+    const ring=document.getElementById('report-ring');
+    ring.style.transition='stroke-dashoffset 1s ease';
+    ring.style.strokeDashoffset=offset;
+    document.getElementById('report-pct').textContent=r.compatibility+'%';
+
+    const stats=[
+      {label:'Humor',val:r.humor},
+      {label:'Depth',val:r.depth},
+      {label:'Flirtiness',val:r.flirt},
+      {label:'Chemistry',val:r.chemistry},
+    ];
+    document.getElementById('stats-grid').innerHTML=stats.map(s=>`
+      <div class="stat-card">
+        <div class="stat-label">${s.label}</div>
+        <div class="stat-bar-bg"><div class="stat-bar" style="width:${s.val}%"></div></div>
+        <div class="stat-value">${s.val}<span style="font-size:12px;color:var(--muted)">/100</span></div>
+      </div>`).join('');
+    document.getElementById('verdict-text').textContent=r.verdict;
+    document.getElementById('growth-text').textContent=r.growth_tip;
+  } catch(e) {
+    document.getElementById('report-pct').textContent='💘';
+    document.getElementById('verdict-text').textContent='The conversation was too magical to measure.';
+    document.getElementById('growth-text').textContent='Keep being curious and open — it\'s clearly working.';
+  }
+}
+
+init();
+</script>
+</body>
+</html>
